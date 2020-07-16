@@ -1,0 +1,129 @@
+using System;
+using System.Collections.Generic;
+using jp.netgamers.free.tuogl;
+using jp.netgamers.free.tugame;
+
+class snake : TURetroGame
+{
+	static int			iScore;
+	static int			foodX, foodY;
+	static bool			bGameOver;
+	static List<float>	mX = new List<float>(){ -100, -110, -120 };
+	static List<float>	mY = new List<float>(){ 0, 0, 0 };
+	static List<float>	mA = new List<float>(){ 0, 0, 0 };
+
+	public override void wmCreated()
+	{
+		Title = "Snake Game";
+		setFrameRate( 60 );
+	}
+
+	public override void wmTimer()
+	{
+		if( bGameOver ){
+			return;
+		}
+
+		iScore++;
+
+		mA[ 0 ] -= TUKeyPad.getLR() * 3;
+		mX[ 0 ] += cos( mA[ 0 ] );
+		mY[ 0 ] += sin( mA[ 0 ] );
+
+		if( mX[ 0 ] < -115 || mX[ 0 ] > 115 ||
+		    mY[ 0 ] <  -85 || mY[ 0 ] >  85 ){
+			bGameOver = true;
+		}
+
+		if( isCollision( mX[ 0 ], mY[ 0 ], foodX, foodY ) ){
+			int		i = mX.Count - 1;
+			mX.Add( mX[ i ] );
+			mY.Add( mY[ i ] );
+			mA.Add( mA[ i ] );
+			foodX = rnd( 200 ) - 100;
+			foodY = rnd( 140 ) - 70;
+			iScore += i * 1000;
+		}
+
+		for( int i = 1; i < mX.Count; i++ ){
+			if( isCollision( mX[ 0 ], mY[ 0 ], mX[ i ], mY[ i ] ) ){
+				bGameOver = true;
+			}
+			mA[ i ] = getAngle( mX[ i - 1 ] - mX[ i ], mY[ i - 1 ] - mY[ i ] );
+			mX[ i ] = mX[ i - 1 ] - cos( mA[ i ] ) * 10;
+			mY[ i ] = mY[ i - 1 ] - sin( mA[ i ] ) * 10;
+		}
+
+		Invalidate();
+	}
+
+	public override void wmDraw()
+	{
+		GL1.Clear( GL1._COLOR_BUFFER_BIT );
+		GL1.EnableClientState( GL1._VERTEX_ARRAY );
+
+		GL1.Color3f( 0.0f, 1.0f, 0.0f );
+		for( int x = -120; x <= 120; x += 10 ){
+			drawRect( x, -90 );
+			drawRect( x,  90 );
+		}
+		for( int y = -90; y <= 90; y += 10 ){
+			drawRect( -120, y );
+			drawRect(  120, y );
+		}
+
+		GL1.Color3f( 1.0f, 1.0f, 0.0f );
+		drawRect( foodX, foodY );
+
+		GL1.Color3f( 1.0f, 1.0f, 1.0f );
+		for( int i = 0; i < mX.Count; i++ ){
+			drawRect( mX[ i ], mY[ i ], mA[ i ] );
+		}
+
+		draw( "SCORE " + iScore );
+		if( bGameOver ){
+			draw( "GAME OVER", -40, 12 );
+		}
+	}
+
+	static float cos( float a )
+	{
+		return( (float)Math.Cos( a / 180 * Math.PI ) );
+	}
+
+	static float sin( float a )
+	{
+		return( (float)Math.Sin( a / 180 * Math.PI ) );
+	}
+
+	static void drawRect( float x, float y )
+	{
+		drawRect( x, y, 0 );
+	}
+
+	static void drawRect( float x, float y, float a )
+	{
+		short[]	va = { -4, 4,  -4, -4,  4, 4,  4, -4 };
+		GL1.PushMatrix();
+		GL1.Translatef( x, y, 0 );
+		GL1.Rotatef( a, 0, 0, 1 );
+		GL1.VertexPointer( 2, va );
+		GL1.DrawArrays( GL1._TRIANGLE_STRIP, 0, 4 );
+		GL1.PopMatrix();
+	}
+
+	static float getAngle( float x, float y )
+	{
+		return( (float)( Math.Atan2( y, x ) * 180 / Math.PI ) );
+	}
+
+	static bool isCollision( float x0, float y0, float x1, float y1 )
+	{
+		return( ( Math.Abs( x0 - x1 ) + Math.Abs( y0 - y1 ) ) < 8 );
+	}
+
+	static void Main()
+	{
+		new snake();
+	}
+}
