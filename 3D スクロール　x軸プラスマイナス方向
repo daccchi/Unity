@@ -1,0 +1,61 @@
+//プラス方向
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ScrollObject : MonoBehaviour
+{
+    //RigidBody定義
+    public Rigidbody  rigidbody;
+
+
+
+    void Start()
+    {
+        rigidbody = this.GetComponent<Rigidbody>();
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        //オブジェクト移動用コード
+        this.transform.position += new Vector3(0.1f, 0, 0);
+
+        if(this.transform.position.x >= 20)
+        {
+            this.transform.position = new Vector3(-19, 0, 0);
+        }
+
+    }
+}
+
+
+//マイナス方向
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ScrollObject3 : MonoBehaviour
+{
+    //RigidBody定義
+    public Rigidbody rigidbody;
+
+
+
+    void Start()
+    {
+        rigidbody = this.GetComponent<Rigidbody>();
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        //オブジェクト移動用コード
+        this.transform.position -= new Vector3(0.1f, 0, 0);
+
+        if (this.transform.position.x <= -20)
+        {
+            this.transform.position = new Vector3(18, 0, 5);
+        }
+
+    }
+}
