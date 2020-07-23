@@ -6,8 +6,8 @@
 Overview
 
 ##説明
-Unity
-＃＃ デモ
+ユニティ
+＃＃デモ　　
 
 ## VS. 
 
@@ -21,8 +21,5 @@ Unity
 
 ## Licence
 
-[MIT]（https://github.com/tcnksm/tool/blob/master/LICENCE）　
 
 ## Author
-
-[tcnksm](https://github.com/tcnksm)
